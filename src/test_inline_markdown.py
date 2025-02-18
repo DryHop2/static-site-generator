@@ -4,7 +4,8 @@ from inline_markdown import (split_nodes_delimiter,
                              extract_markdown_links,
                              split_nodes_image,
                              split_nodes_link,
-                             text_to_textnodes
+                             text_to_textnodes,
+                             extract_title
 )
 
 from textnode import TextNode, TextType
@@ -194,6 +195,47 @@ class TestInlineMarkdown(unittest.TestCase):
             nodes,
         )
 
+
+
+
+    def test_valid_h1(self):
+        self.assertEqual(extract_title("# Hello"), "Hello")
+
+    def test_h1_with_extra_spaces(self):
+        self.assertEqual(extract_title("#   Spaced Title   "), "Spaced Title")
+
+    def test_h1_among_other_text(self):
+        markdown = """Some text before
+        # Title in the middle
+        Some text after"""
+        self.assertEqual(extract_title(markdown), "Title in the middle")
+
+    def test_no_h1_header(self):
+        with self.assertRaises(ValueError):
+            extract_title("## Not an H1\nSome text")
+
+    def test_multiline_markdown(self):
+        markdown = """Some intro text
+        # My Document Title
+        More content here"""
+        self.assertEqual(extract_title(markdown), "My Document Title")
+
+    def test_only_h1_in_content(self):
+        markdown = """# Single Header"""
+        self.assertEqual(extract_title(markdown), "Single Header")
+
+    def test_h1_not_at_start(self):
+        markdown = """Some text
+        ## A Subheading
+        # Valid Title Here
+        More content"""
+        self.assertEqual(extract_title(markdown), "Valid Title Here")
+
+    def test_multiple_h1_headers(self):
+        markdown = """# First Title
+        Some text
+        # Second Title"""
+        self.assertEqual(extract_title(markdown), "First Title")
 
 if __name__ == "__main__":
     unittest.main()
