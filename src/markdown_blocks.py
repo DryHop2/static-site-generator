@@ -92,7 +92,7 @@ def heading_to_html_node(block):
     return ParentNode(f"h{level}", children)
 
 
-def code_to_hteml_node(block):
+def code_to_html_node(block):
     if not block.startswith("```") or not block.endswith("```"):
         raise ValueError("invalid code block")
     text = block[4:-3]
